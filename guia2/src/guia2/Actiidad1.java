@@ -5,15 +5,16 @@ package guia2;
 import java.util.Scanner;
 public class Actiidad1 {
     public static void main(String[] args) {
-        Scanner teclado = new Scanner(System.in);
+        Scanner leerTeclado = new Scanner(System.in);
         System.out.println("Ingresar un numero: ");
         int numero;
-        numero = teclado.nextInt();
+        numero = leerTeclado.nextInt();
         if (numero % 2 == 0) {
             System.out.println("el número es par ");
         } else {
             System.out.println("el númro es impar ");
         }
+        leerTeclado.close;
     }
 
 }
