@@ -11,16 +11,17 @@ public class Actividad2 {
 
     public static void main(String[] args) {
         String frase;
-        try (Scanner teclado = new Scanner(System.in)) {
-            System.out.println("Igrese una frase: ");
-            frase = teclado.nextLine();
-            System.out.println("Su frase es "+frase);
+        Scanner leerTeclado = new Scanner(System.in) {
+        System.out.println("Igrese una frase: ");
+        frase = leerTeclado.nextLine();
+        System.out.println("Su frase es "+frase);
         }
         if ("eureka".equalsIgnoreCase(frase)){
             System.out.println("La frase es correcta");
         }else{
             System.out.println("La frase es incorrecta");
         }
+        leerTeclado.close;
 
     }
 
