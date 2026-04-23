@@ -9,46 +9,57 @@ public class NotebookLMConnector {
 
     public NotebookLMConnector(String configPath) throws IOException {
         this.config = new NotebookLMConfig(configPath);
-        this.client = new NotebookLMClient(config.getAccessToken(), config.getBaseUrl());
+        this.client = new NotebookLMClient(config.getAccessToken(), config.buildBaseUrl());
     }
 
-    /** Returns true if the service responds successfully. */
+    /** Verifica que la API responde correctamente. */
     public boolean testConnection() {
         try {
-            client.get("/api/v1/notebooks");
+            client.get("/notebooks:listRecentlyViewed");
             return true;
         } catch (IOException e) {
-            System.err.println("Connection test failed: " + e.getMessage());
+            System.err.println("Fallo en la conexión: " + e.getMessage());
             return false;
         }
     }
 
-    /** Lists all notebooks for the authenticated user. */
-    public String listNotebooks() throws IOException {
-        return client.get("/api/v1/notebooks");
+    /** Lista los notebooks vistos recientemente (hasta 500). */
+    public String listRecentNotebooks() throws IOException {
+        return client.get("/notebooks:listRecentlyViewed");
     }
 
-    /** Creates a new notebook with the given title. */
+    /** Crea un notebook con el título indicado. Devuelve el JSON con notebookId y name. */
     public String createNotebook(String title) throws IOException {
         String body = "{\"title\":\"" + escapeJson(title) + "\"}";
-        return client.post("/api/v1/notebooks", body);
+        return client.post("/notebooks", body);
     }
 
-    /** Deletes a notebook by ID. */
-    public String deleteNotebook(String notebookId) throws IOException {
-        return client.delete("/api/v1/notebooks/" + notebookId);
+    /** Recupera un notebook por su ID. */
+    public String getNotebook(String notebookId) throws IOException {
+        return client.get("/notebooks/" + notebookId);
     }
 
-    /** Adds a source URL to an existing notebook. */
-    public String addSource(String notebookId, String sourceUrl) throws IOException {
-        String body = "{\"source_url\":\"" + escapeJson(sourceUrl) + "\"}";
-        return client.post("/api/v1/notebooks/" + notebookId + "/sources", body);
+    /**
+     * Borra uno o más notebooks por su nombre completo de recurso.
+     * Formato del nombre: projects/PROJECT_NUMBER/locations/LOCATION/notebooks/NOTEBOOK_ID
+     */
+    public String deleteNotebooks(String... notebookNames) throws IOException {
+        StringBuilder names = new StringBuilder();
+        for (int i = 0; i < notebookNames.length; i++) {
+            if (i > 0) names.append(',');
+            names.append("\"").append(escapeJson(notebookNames[i])).append("\"");
+        }
+        return client.post("/notebooks:batchDelete", "{\"names\":[" + names + "]}");
     }
 
-    /** Queries a notebook with a natural-language question. */
-    public String query(String notebookId, String question) throws IOException {
-        String body = "{\"question\":\"" + escapeJson(question) + "\"}";
-        return client.post("/api/v1/notebooks/" + notebookId + "/query", body);
+    /**
+     * Comparte un notebook con un usuario.
+     * role: PROJECT_ROLE_OWNER | PROJECT_ROLE_WRITER | PROJECT_ROLE_READER | PROJECT_ROLE_NOT_SHARED
+     */
+    public String shareNotebook(String notebookId, String email, String role) throws IOException {
+        String body = "{\"accountAndRoles\":[{\"email\":\""
+                + escapeJson(email) + "\",\"role\":\"" + escapeJson(role) + "\"}]}";
+        return client.post("/notebooks/" + notebookId + ":share", body);
     }
 
     private static String escapeJson(String value) {

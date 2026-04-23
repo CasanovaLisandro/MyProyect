@@ -15,23 +15,32 @@ public class NotebookLMConfig {
         }
     }
 
-    public String getClientId() {
-        return properties.getProperty("google.client.id");
-    }
-
-    public String getClientSecret() {
-        return properties.getProperty("google.client.secret");
-    }
-
     public String getAccessToken() {
         return properties.getProperty("google.access.token");
     }
 
-    public String getRefreshToken() {
-        return properties.getProperty("google.refresh.token");
+    public String getProjectNumber() {
+        return properties.getProperty("google.project.number");
     }
 
-    public String getBaseUrl() {
-        return properties.getProperty("notebooklm.base.url", "https://notebooklm.google.com");
+    /** us | eu | global  (prefijo del subdominio del endpoint) */
+    public String getEndpointLocation() {
+        return properties.getProperty("google.endpoint.location", "us");
+    }
+
+    /** Ubicación geográfica del almacén de datos: global | us | eu */
+    public String getLocation() {
+        return properties.getProperty("google.location", "global");
+    }
+
+    /**
+     * Construye la URL base real de la Discovery Engine API:
+     * https://ENDPOINT_LOCATION-discoveryengine.googleapis.com/v1alpha/projects/PROJECT_NUMBER/locations/LOCATION
+     */
+    public String buildBaseUrl() {
+        return "https://" + getEndpointLocation()
+                + "-discoveryengine.googleapis.com/v1alpha/projects/"
+                + getProjectNumber()
+                + "/locations/" + getLocation();
     }
 }

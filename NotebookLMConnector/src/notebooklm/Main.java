@@ -10,18 +10,18 @@ public class Main {
         try {
             NotebookLMConnector connector = new NotebookLMConnector(configPath);
 
-            System.out.println("Probando conexión con NotebookLM...");
+            System.out.println("Probando conexión con NotebookLM Enterprise...");
             if (!connector.testConnection()) {
-                System.err.println("Error: no se pudo conectar. Verificá las credenciales en " + configPath);
+                System.err.println("No se pudo conectar. Verificá el token y el número de proyecto en: " + configPath);
                 System.exit(1);
             }
-            System.out.println("Conexión exitosa.");
+            System.out.println("Conexión exitosa.\n");
 
-            System.out.println("\nNotebooks disponibles:");
-            System.out.println(connector.listNotebooks());
+            System.out.println("Notebooks recientes:");
+            System.out.println(connector.listRecentNotebooks());
 
         } catch (IOException e) {
-            System.err.println("Error de configuración: " + e.getMessage());
+            System.err.println("Error: " + e.getMessage());
             System.exit(1);
         }
     }

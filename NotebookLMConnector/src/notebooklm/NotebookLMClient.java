@@ -36,11 +36,6 @@ public class NotebookLMClient {
         return readResponse(conn);
     }
 
-    public String delete(String endpoint) throws IOException {
-        HttpURLConnection conn = openConnection(baseUrl + endpoint, "DELETE");
-        return readResponse(conn);
-    }
-
     private HttpURLConnection openConnection(String urlStr, String method) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
         conn.setRequestMethod(method);
